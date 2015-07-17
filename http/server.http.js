@@ -8,10 +8,9 @@ var server = http.createServer(function(req, res) {
 	if (/^\/api\/country$/.test(url)) {
 		if (req.method === "GET") {
 			data.getCountries()
-				.then(function(countries) { 
-					var status = countries.length ? 200 : 404; 
+				.spread(function(countries, status) { 
 					res.writeHead(status, { 'Content-Type': 'application/json' });
-					res.end(JSON.stringify(countries)); 
+					countries ? res.end(JSON.stringify(countries)) : res.end(); 
 				});
 		} else if (req.method === "POST") {
 			var body = '';
@@ -33,10 +32,9 @@ var server = http.createServer(function(req, res) {
 		var query = req.url.slice(13);
 		if (req.method === "GET") {
 			data.getHotels(query)
-				.then(function(hotels) {
-					var status = hotels.length ? 200 : 404; 
+				.spread(function(hotels, status) {
 					res.writeHead(status, { 'Content-Type': 'application/json' });
-					res.end(JSON.stringify(hotels)); 
+					hotels ? res.end(JSON.stringify(hotels)) : res.end(); 
 				});
 		} else if (req.method === "POST") {
 			var body = '';
@@ -58,10 +56,9 @@ var server = http.createServer(function(req, res) {
 		var query = url.slice(11);
 		if (req.method === "GET") {
 			data.getHotel(query)
-				.then(function(hotel) {
-					var status = hotel.length ? 200 : 404; 
+				.spread(function(hotel, status) {
 					res.writeHead(status, { 'Content-Type': 'application/json' });
-					res.end(JSON.stringify(hotel)); 
+					hotel ? res.end(JSON.stringify(hotel)) : res.end(); 
 				});
 		} else if (req.method === "PUT") {
 			var body = '';
@@ -70,16 +67,14 @@ var server = http.createServer(function(req, res) {
 			});
 			req.on('end', function() {
 				data.updateHotel(query, qs.parse(body))
-					.then(function(success) { 
-						var status = success ? 200 : 404; 
+					.then(function(status) { 
 						res.writeHead(status);
 						res.end(); 
 					});
 			})
 		} else if (req.method === "DELETE") {
 			data.removeHotel(query)
-				.then(function() { 
-					var status = success ? 200 : 404; 
+				.then(function(status) { 
 					res.writeHead(status);
 					res.end(); 
 				});

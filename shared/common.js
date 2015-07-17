@@ -14,6 +14,9 @@ module.exports = {
 				.then(function(data) {
 					return data.countries;
 				})
+				.then(function(data) {
+					return data.length ? [data, 200] : [null, 404];
+				})
 				.catch(function(e) {
 					throw e;
 				});
@@ -39,6 +42,9 @@ module.exports = {
 					return _.filter(data.hotels, function(hotel) {
 						return _.kebabCase(hotel.Country) === query || hotel.Country === query;
 					});
+				})
+				.then(function(data) {
+					return data.length ? [data, 200] : [null, 404];
 				})
 				.catch(function(e) {
 					throw e;
@@ -67,6 +73,9 @@ module.exports = {
 						return _.kebabCase(hotel.Name) === query || hotel.Name === query;
 					});
 				})
+				.then(function(data) {
+					return data.length ? [data, 200] : [null, 404];
+				})
 				.catch(function(e) {
 					throw e;
 				});
@@ -78,12 +87,19 @@ module.exports = {
 					var hotel = _.filter(data.hotels, function(hotel) {
 						return _.kebabCase(hotel.Name) === query || hotel.Name === query;
 					});
-					var updatedHotel = _.assign(hotel[0], attr);
-					data.hotels[hotel.Name] = updatedHotel;
-					return data;
+					if (hotel.length) {
+						var updatedHotel = _.assign(hotel[0], attr);
+						data.hotels[hotel.Name] = updatedHotel;
+						return data;
+					} else {
+						return false;
+					}		
 				})
 				.then(function(data) {
-					return fs.writeFileAsync(db, JSON.stringify(data, null, 4));
+					return data ? [fs.writeFileAsync(db, JSON.stringify(data, null, 4)), true] : [null, false];
+				})
+				.spread(function(data, success) {
+					return success ? 200 : 404
 				})
 				.catch(function(e) {
 					throw e;
@@ -93,13 +109,21 @@ module.exports = {
 		return fs.readFileAsync(db, 'utf-8') 
 				.then(JSON.parse)
 				.then(function(data) {
-					data.hotels = _.filter(data.hotels, function(hotel) {
-						return _.kebabCase(hotel.Name) !== query && hotel.Name !== query;
-					});
-					return data;
+					var here = _.includes(_.pluck(data.hotels, 'Name'), query);
+					if (here) {
+						data.hotels = _.filter(data.hotels, function(hotel) {
+							return _.kebabCase(hotel.Name) !== query && hotel.Name !== query;
+						});
+						return data;
+					} else {
+						return false;
+					}				
 				})
 				.then(function(data) {
-					return fs.writeFileAsync(db, JSON.stringify(data, null, 4));
+					return data ? [fs.writeFileAsync(db, JSON.stringify(data, null, 4)), true] : [null, false];
+				})
+				.spread(function(data, success) {
+					return success ? 200 : 404
 				})
 				.catch(function(e) {
 					throw e;

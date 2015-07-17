@@ -5,9 +5,9 @@ var router = express.Router();
 module.exports = router
 	.get('/country', function(req, res) {
 		data.getCountries()
-			.then(function(countries) { 
-				var status = countries.length ? 200 : 404;
-				res.json(status, countries); 
+			.spread(function(countries, status) { 
+				res.status(status);
+				countries ? res.json(countries) : res.end(); 
 			});
 	})
 	.post('/country', function(req, res) {
@@ -18,9 +18,9 @@ module.exports = router
 	})
 	.get('/country/:country', function(req, res) {
 		data.getHotels(req.params.country)
-			.then(function(hotels) { 
-				var status = hotels.length ? 200 : 404;
-				res.json(status, hotels); 
+			.spread(function(hotels, status) { 
+				res.status(status);
+				hotels ? res.json(hotels) : res.end(); 
 			});
 	})
 	.post('/country/:country', function(req, res) {
@@ -31,20 +31,20 @@ module.exports = router
 	})
 	.get('/hotel/:hotel', function(req, res) {
 		data.getHotel(req.params.hotel)
-			.then(function(hotel) { 
-				var status = hotel.length ? 200 : 404;
-				res.json(status, hotel); 
+			.spread(function(hotel, status) { 
+				res.status(status);
+				hotel ? res.json(hotel) : res.end(); 
 			});
 	})
 	.put('/hotel/:hotel', function(req, res) {
 		data.updateHotel(req.params.hotel, req.body)
-			.then(function() { 
-				res.sendStatus(200); 
+			.then(function(status) { 
+				res.sendStatus(status); 
 			});
 	})
 	.delete('/hotel/:hotel', function(req, res) {
 		data.removeHotel(req.params.hotel)
-			.then(function() { 
-				res.sendStatus(200); 
+			.then(function(status) { 
+				res.sendStatus(status); 
 			});
 	});

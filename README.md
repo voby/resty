@@ -1,12 +1,12 @@
-1. Express version
+Express version
 ```
 npm run express
 ```
-2. Http version
+Http version
 ```
 npm run http
 ```
-3. Generate data
+Generate data
 ```
 npm run generate
 ```
