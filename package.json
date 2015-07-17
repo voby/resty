@@ -1,0 +1,21 @@
+{
+  "name": "resty",
+  "main": "index.js",
+  "scripts": {
+    "express": "node express/server.express.js",
+    "http": "node http/server.http.js",
+    "generate": "node generator.js"
+  },
+  "author": "voby",
+  "devDependencies": {
+    "casual": "^1.4.7",
+    "rosie": "^0.4.2"
+  },
+  "dependencies": {
+    "bluebird": "^2.9.34",
+    "body-parser": "^1.13.2",
+    "express": "^4.13.1",
+    "lodash": "^3.10.0",
+    "morgan": "^1.6.1"
+  }
+}
